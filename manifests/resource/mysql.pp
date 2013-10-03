@@ -17,15 +17,15 @@ class pacemaker::resource::mysql($name, $group=nil, $interval="30s", $stickiness
         } else {
             $replication_options = ''
         }
-        exec { "Creating MySQL ${name}":
-    	command => "/usr/sbin/pcs resource create ${resource_id} mysql enable_creation=true${replication_options} op monitor interval=${interval}",
+        if($group != nil){
+            $group_option = ' --group=$group'
+        } else {
+            $group_option = ''
+        } 
+	exec { "Creating MySQL ${name}":
+    	command => "/usr/sbin/pcs resource create ${resource_id} mysql enable_creation=true${replication_options} op monitor interval=${interval}${group_option}",
         unless  => "/usr/sbin/pcs resource show ${resource_id} > /dev/null 2>&1",
         require => [Exec["Start Cluster $cluster_name"], Package["pcs"]]
-        }
-        pacemaker::resource::group { "${resource_id}-${group}":
-            resource_id => $resource_id,
-            resource_group => $group,
-            require => Exec["Creating MySQL ${name}"],
         }
     }
 }
