@@ -65,13 +65,13 @@ and add the resource to the group. This has been demonstrated
 on the ip address example, but is not a required propery.
 
 #### Add virtual machine fencing with fence_virsh
-  pacemaker::resource::fence_virsh { 'mgt1':
-    name          => 'virsh-fence-name', 
-    port          => 'vm-node1 vm-node2 vm-node3',
-    ipaddr        => 'hypervisor.fqdn_or_ip',
-    login         => 'root',
-    identity_file => '/root/.ssh/id_dsa',
-  }
+    pacemaker::resource::fence_virsh { 'mgt1':
+      name          => 'virsh-fence-name', 
+      port          => 'vm-node1 vm-node2 vm-node3',
+      ipaddr        => 'hypervisor.fqdn_or_ip',
+      login         => 'root',
+      identity_file => '/root/.ssh/id_dsa',
+    }
 
 You need to setup a ssh key to allow the cluster nodes to connect 
 to the hypervisor using qemu+ssh. 
