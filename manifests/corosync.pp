@@ -10,9 +10,9 @@
 # [*setup_cluster*]
 #   If your cluster includes pcsd, this should be set to true for just
 #    one node in cluster.  Else set to true for all nodes.
-# [*use_unicast*]
+# [*transport*]
 #   If you run your cluster across different datacenters or switches,
-#   this might come in handy. Sets transport to "udpu", if true.
+#   this might come in handy. Set transport to "udpu", if needed, otherwise undef.
 # [*manage_fw*]
 #   Manage or not IPtables rules.
 # [*settle_timeout*]
@@ -31,7 +31,7 @@ class pacemaker::corosync(
   $settle_timeout   = '3600',
   $settle_tries     = '360',
   $settle_try_sleep = '10',
-  $use_unicast      = false,
+  $transport        = undef,
 ) inherits pacemaker {
   include ::pacemaker::params
 
@@ -80,13 +80,11 @@ class pacemaker::corosync(
       unless => "/usr/bin/test -f /etc/corosync/corosync.conf",
       require => Class["::pacemaker::install"],
     }
-	if $use_unicast {
-      exec { 'setting unicast in cman':
-        command => '/usr/sbin/ccs -f /etc/cluster/cluster.conf --setcman transport="udpu"',
-	  }
-    }
-  }
     ->
+    exec { 'setting transport in cman':
+		  command => '/usr/sbin/ccs -f /etc/cluster/cluster.conf --setcman transport="udpu"',
+	}
+    ~>
     exec {"Start Cluster $cluster_name":
       unless => "/usr/sbin/pcs status >/dev/null 2>&1",
       command => "/usr/sbin/pcs cluster start --all",
