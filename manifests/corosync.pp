@@ -85,6 +85,7 @@ class pacemaker::corosync(
         command => '/usr/sbin/ccs -f /etc/cluster/cluster.conf --setcman transport="udpu"',
 	  }
     }
+  }
     ->
     exec {"Start Cluster $cluster_name":
       unless => "/usr/sbin/pcs status >/dev/null 2>&1",
