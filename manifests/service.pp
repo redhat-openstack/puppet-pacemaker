@@ -1,3 +1,19 @@
+# == Class: pacemaker::service
+#
+# Description: Pacemaker service file
+#
+# === Parameters
+#
+# None
+#
+# === Examples
+#
+#  include ::pacemaker::service
+#
+# === Copyright
+#
+#
+#
 class pacemaker::service (
   $ensure     = running,
   $hasstatus  = true,

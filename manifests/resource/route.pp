@@ -1,3 +1,17 @@
+# == Define: pacemaker::resource::systemd
+#
+# Description:
+#
+# === Parameters
+#
+# None
+#
+# === Examples
+#
+#  include ::pacemaker::resource::systemd
+#
+# === Copyright
+#
 define pacemaker::resource::route(
   $ensure             = 'present',
   $src                = '',
