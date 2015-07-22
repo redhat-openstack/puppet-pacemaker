@@ -22,6 +22,7 @@
 class pacemaker::corosync(
   $cluster_members,
   $cluster_name     = 'clustername',
+  $hacluster_pwd    = $pacemaker::params::hacluster_pwd,
   $setup_cluster    = true,
   $manage_fw        = true,
   $settle_timeout   = '3600',
@@ -33,7 +34,6 @@ class pacemaker::corosync(
   $pcs_miss_count   = '5',
   $pcs_fail_recv    = '2500',
 ) inherits pacemaker {
-  include ::pacemaker::params
 
   if $manage_fw {
     firewall { '001 corosync mcast':
@@ -54,12 +54,13 @@ class pacemaker::corosync(
     Service['pcsd'] ->
     # we have more fragile when-to-start pacemaker conditions with pcsd
     exec {"enable-not-start-${cluster_name}":
-      command => '/usr/sbin/pcs cluster enable'
+      command => '/usr/sbin/pcs cluster enable',
+      unless  => $::pacemaker::enabled_check_cmd,
     }
     ->
     exec {"Set password for hacluster user on ${cluster_name}":
       command => "/bin/echo ${::pacemaker::hacluster_pwd} | /usr/bin/passwd --stdin hacluster",
-      creates => '/etc/cluster/cluster.conf',
+      creates => $::pacemaker::config_file,
       require => Class['::pacemaker::install'],
     }
     ->
@@ -75,7 +76,7 @@ class pacemaker::corosync(
 
   if $setup_cluster {
     exec {"Create Cluster ${cluster_name}":
-      creates => '/etc/cluster/cluster.conf',
+      creates => $::pacemaker::config_file,
       command => "/usr/sbin/pcs cluster setup --name ${cluster_name} ${cluster_members} --token=${pcs_token} --join=${pcs_join} --miss_count_const=${pcs_miss_count} --consensus=${pcs_consensus} --fail_recv_const=${pcs_fail_recv}",
       unless  => '/usr/bin/test -f /etc/corosync/corosync.conf',
       require => Class['::pacemaker::install'],
