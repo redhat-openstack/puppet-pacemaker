@@ -9,7 +9,7 @@ Puppet::Type.newtype(:pcmk_constraint) do
 
     newparam(:constraint_type) do
         desc "the pacemaker type to create"
-        newvalues(:location, :colocation)
+        newvalues(:location, :colocation, :location_rule)
     end
     newparam(:resource) do
         desc "resource list"
@@ -22,10 +22,17 @@ Puppet::Type.newtype(:pcmk_constraint) do
     newparam(:score) do
         desc "Score"
     end
+    newparam(:expression) do
+        desc "Expression"
+    end
+    newparam(:resource_discovery) do
+        desc "Resource Discovery"
+    end
     newparam(:master_slave) do
         desc "Enable master/slave support with multistage"
         newvalues(:true)
         newvalues(:false)
     end
+
 
 end
